@@ -1,0 +1,47 @@
+name: Node.js CI
+
+on:
+  # Triggers the workflow on push or pull request events
+  # targeting the 'main' branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # The 'build' job handles building and testing the project
+  build:
+    # Runs on the latest version of Ubuntu
+    runs-on: ubuntu-latest
+
+    strategy:
+      # This matrix defines the different versions of Node.js
+      # to test the project against.
+      matrix:
+        node-version: [18.x, 20.x]
+        # You can add more Node.js versions or other configurations here.
+        # For example:
+        # os: [ubuntu-latest, windows-latest]
+
+    steps:
+    # This step checks out your repository code so the workflow can access it.
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # This step sets up the specified Node.js version.
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        # Setting a cache key for faster dependency installation
+        cache: 'npm'
+
+    # This step installs all project dependencies.
+    - name: Install dependencies
+      run: npm install
+
+    # This step runs the tests for your project.
+    # If your project uses a different command (e.g., 'npm run test'),
+    # you can change the run command below.
+    - name: Run tests
+      run: npm test
